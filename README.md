@@ -29,8 +29,8 @@ Pour que le livereload fonctionne sans serveur local (en ouvrant un fichier html
 
 ## Démarrer le projet
 
-    $ git clone https://github.com/Exilz/archriss-gulp-boilerplate.git
-    $ cd archriss-gulp-boilerplate
+    $ git clone https://github.com/archriss/gulp-frontend-kit
+    $ cd gulp-frontend-kit
     $ npm install
 
 ## Commandes du projet
