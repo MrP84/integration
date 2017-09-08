@@ -1,0 +1,12 @@
+// html classes
+$class-ios: 'is--ios';
+$class-android: 'is--android';
+$class-touch: 'is--touch';
+$class-safari: 'is--safari';
+$class-old: 'is--crappy';
+$class-scroll-lock: 'lock-scroll';
+
+
+// media queries
+$layout-width-min: 320px; // WARNING: we won't deal with smartphones smaller than this
+$layout-width-max: 1200px;

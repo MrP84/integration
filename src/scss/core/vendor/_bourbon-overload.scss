@@ -1,0 +1,203 @@
+// Overriding Bourbon's mixin because of a bug with 'transform'
+// https://github.com/thoughtbot/bourbon/issues/794
+// https://github.com/thoughtbot/bourbon/issues/800
+// @mixin trans-prefix($value, $prefix: "") {
+//     $slice: str-slice(inspect($value), 0, 9);
+//
+//     @if $slice == "transform" {
+//         #{$prefix}transition: #{$prefix}#{$value};
+//     } @else {
+//         #{$prefix}transition: $value;
+//     }
+// }
+// @mixin transition($properties...) {
+//     @if length($properties) > 1 {
+//         $spec: ();
+//         @for $i from 1 through length($properties) {
+//           $spec: append($spec, nth($properties, $i), comma);
+//         }
+//     } @else {
+//         $spec: $properties;
+//     }
+//
+//     @include trans-prefix($spec, -webkit-);
+//     // @include trans-prefix($spec, -moz-);
+//     @include trans-prefix($spec);
+// }
+
+
+// TODO: find out why this solution triggers compilation errors
+
+// Other solution that seems to work better:
+// http://log.vieron.net/articles/sass-mixins-for-vendor-prefixed-transitions-including-properties/
+// @function prefix($property, $prefixes: (webkit moz o ms)) {
+//     $vendor-prefixed-properties: transform; // background-clip background-size;
+//     $result: ();
+//     @each $prefix in $prefixes {
+//        @if index($vendor-prefixed-properties, $property) {
+//          $property: -#{$prefix}-#{$property}
+//        }
+//        $result: append($result, $property);
+//     }
+//     @return $result;
+// }
+//
+// @function trans-prefix($transition, $prefix: webkit) {
+//     $prefixed: ();
+//     @each $trans in $transition {
+//         $prop-name: nth($trans, 1);
+//         $vendor-prop-name: prefix($prop-name, $prefix);
+//         $prop-vals: nth($trans, 2);
+//         $prefixed: append($prefixed, ($vendor-prop-name $prop-vals), comma);
+//     }
+//
+//     @return $prefixed;
+// }
+//
+// @mixin transition($values...) {
+//     $transitions: ();
+//     @each $declaration in $values {
+//         $prop: nth($declaration, 1);
+//         $prop-opts: ();
+//         $length: length($declaration);
+//         @for $i from 2 through $length {
+//             $prop-opts: append($prop-opts, nth($declaration, $i));
+//         }
+//         $trans: ($prop, $prop-opts);
+//         $transitions: append($transitions, $trans, comma);
+//     }
+//
+//     -webkit-transition: trans-prefix($transitions, webkit);
+//     // -moz-transition: trans-prefix($transitions, moz);
+//     // -o-transition: trans-prefix($transitions, o);
+//     transition: $values;
+// }
+
+
+// Overload Bourbon's font-face mixin
+// because requiring the woff2 format can lead to a lot of unwanted warnings
+@mixin font-face(
+    $font-family,
+    $file-path,
+    $weight: normal,
+    $style: normal,
+    $asset-pipeline: $asset-pipeline,
+    // MODIF: remove woff2 format
+    $file-formats: eot woff ttf svg) {
+        $font-url-prefix: font-url-prefixer($asset-pipeline);
+
+        @font-face {
+            font-family: $font-family;
+            font-style: $style;
+            font-weight: $weight;
+
+            src: font-source-declaration(
+            $font-family,
+            $file-path,
+            $asset-pipeline,
+            $file-formats,
+            $font-url-prefix
+        );
+    }
+}
+
+
+// Overload miscellaneous Bourbon's mixins to avoid using unneeded vendor prefixes
+@function getRequiredPrefixes() {
+    @return webkit spec;
+}
+
+// _animation.scss
+@mixin animation($animations...) {
+    @include prefixer(animation, $animations, getRequiredPrefixes());
+}
+@mixin animation-name($names...) {
+    @include prefixer(animation-name, $names, getRequiredPrefixes());
+}
+@mixin animation-duration($times...) {
+    @include prefixer(animation-duration, $times, getRequiredPrefixes());
+}
+@mixin animation-timing-function($motions...) {
+    @include prefixer(animation-timing-function, $motions, getRequiredPrefixes());
+}
+@mixin animation-iteration-count($values...) {
+    @include prefixer(animation-iteration-count, $values, getRequiredPrefixes());
+}
+@mixin animation-direction($directions...) {
+    @include prefixer(animation-direction, $directions, getRequiredPrefixes());
+}
+@mixin animation-play-state($states...) {
+    @include prefixer(animation-play-state, $states, getRequiredPrefixes());
+}
+@mixin animation-delay($times...) {
+    @include prefixer(animation-delay, $times, getRequiredPrefixes());
+}
+@mixin animation-fill-mode($modes...) {
+    @include prefixer(animation-fill-mode, $modes, getRequiredPrefixes());
+}
+
+// _appearance.scss
+@mixin appearance($value) {
+    @include prefixer(appearance, $value, getRequiredPrefixes());
+}
+
+// _columns.scss
+@mixin columns($arg: auto) {
+    @include prefixer(columns, $arg, getRequiredPrefixes());
+}
+@mixin column-count($int: auto) {
+    @include prefixer(column-count, $int, getRequiredPrefixes());
+}
+@mixin column-gap($length: normal) {
+    @include prefixer(column-gap, $length, getRequiredPrefixes());
+}
+@mixin column-fill($arg: auto) {
+    @include prefixer(column-fill, $arg, getRequiredPrefixes());
+}
+@mixin column-rule($arg) {
+    @include prefixer(column-rule, $arg, getRequiredPrefixes());
+}
+@mixin column-rule-color($color) {
+     @include prefixer(column-rule-color, $color, getRequiredPrefixes());
+}
+@mixin column-rule-style($style: none) {
+    @include prefixer(column-rule-style, $style, getRequiredPrefixes());
+}
+@mixin column-rule-width ($width: none) {
+     @include prefixer(column-rule-width, $width, getRequiredPrefixes());
+}
+@mixin column-span($arg: none) {
+    @include prefixer(column-span, $arg, getRequiredPrefixes());
+}
+@mixin column-width($length: auto) {
+    @include prefixer(column-width, $length, getRequiredPrefixes());
+}
+
+// _hyphens.scss
+@mixin hyphens($hyphenation: none) {
+    @include prefixer(hyphens, $hyphenation, getRequiredPrefixes());
+}
+
+// _perspective.scss
+@mixin perspective($depth: none) {
+    @include prefixer(perspective, $depth, getRequiredPrefixes());
+}
+@mixin perspective-origin($value: 50% 50%) {
+    @include prefixer(perspective-origin, $value, getRequiredPrefixes());
+}
+
+// _transform.scss
+@mixin transform($property: none) {
+    @include prefixer(transform, $property, getRequiredPrefixes());
+}
+@mixin transform-origin($axes: 50%) {
+    @include prefixer(transform-origin, $axes, getRequiredPrefixes());
+}
+@mixin transform-style($style: flat) {
+    @include prefixer(transform-style, $style, getRequiredPrefixes());
+}
+
+// _user-select.scss
+@mixin user-select($value: none) {
+    @include prefixer(user-select, $value, getRequiredPrefixes());
+}

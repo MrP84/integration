@@ -1,0 +1,63 @@
+// Return z-index according to a custom map
+// http://www.sitepoint.com/better-solution-managing-z-index-sass/
+@function get-z($layer) {
+    @if not map-has-key($z-layers, $layer) {
+        @warn "No layer found for `#{$layer}` in $z-layers map. Property omitted.";
+    }
+
+    @return map-get($z-layers, $layer);
+}
+
+
+// Return even/odd numbers
+@function getEven($number, $ceil: null) {
+    @if ($number % 2 != 0) {
+        $number: $number - 1;
+    }
+
+    @if ($ceil == true) {
+        @return ceil($number);
+    } @else {
+        @return floor($number);
+    }
+}
+@function getOdd($number, $ceil: null) {
+    @if ($number % 2 == 0) {
+        $number: $number - 1;
+    }
+
+    @if ($ceil == true) {
+        @return ceil($number);
+    } @else {
+        @return floor($number);
+    }
+}
+
+
+// Number's power calculation
+// https://unindented.org/articles/trigonometry-in-sass/
+// https://github.com/modularscale/modularscale-sass/blob/2.x/stylesheets/modular-scale/_pow.scss
+@function pow($number, $exp) {
+    $unit: $number * 0 + 1; // units
+    $number: $number/$unit; // unitless number
+    $value: 1;
+
+    @if $exp > 0 {
+        @for $i from 1 through $exp {
+            $value: $value * $number;
+        }
+    }
+    @else if $exp < 0 {
+        @for $i from 1 through -$exp {
+            $value: $value / $number;
+        }
+    }
+
+    @return $value * $unit;
+}
+
+
+// Font ratio calculation
+@function font-ratio($value, $ratio, $base) {
+    @return pow($ratio, $value) * $base;
+}

@@ -1,0 +1,32 @@
+$custom-padding: 21px;
+
+body {
+    @include font-regular;
+    @include scroll-enhanced;
+}
+
+.center {
+    text-align: center;
+    // font-size: 32px;
+    font-size: 2rem;
+}
+
+.logos {
+    img {
+        max-height: 200px;
+        padding: $custom-padding;
+        z-index: get-z('modal');
+    }
+}
+
+@media (min-width: 71.25em) {
+    p {
+        font-weight: bold;
+    }
+}
+
+@media (min-width: 71.25em) {
+    body {
+        background-color: white;
+    }
+}

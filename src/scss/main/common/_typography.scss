@@ -1,0 +1,92 @@
+$base-font-size: 16px !default;
+
+// http://www.modularscale.com/
+$base-font-size-title: 14px;
+$font-size-ratio: 1.125;
+
+$h1-font-size: round(font-ratio(2, $font-size-ratio, $base-font-size-title));
+$h2-font-size: round(font-ratio(1, $font-size-ratio, $base-font-size-title));
+$h3-font-size: round(font-ratio(0, $font-size-ratio, $base-font-size-title));
+$h4-font-size: round(font-ratio(-1, $font-size-ratio, $base-font-size-title));
+$h5-font-size: round(font-ratio(-2, $font-size-ratio, $base-font-size-title));
+$h6-font-size: round(font-ratio(-3, $font-size-ratio, $base-font-size-title));
+$p-font-size: $base-font-size; // 15px;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 $text-large-spacing;
+    line-height: $heading-line-height;
+    font-weight: normal;
+    // @include break-word;
+}
+
+h1 {
+    @include font-title;
+    @include font-size($h1-font-size);
+    letter-spacing: .05em;
+    text-align: center;
+    text-transform: uppercase;
+}
+h2 {
+    @include font-size($h2-font-size);
+}
+h3 {
+    @include font-size($h3-font-size);
+}
+h4 {
+    @include font-size($h4-font-size);
+}
+h5 {
+    @include font-size($h5-font-size);
+}
+h6 {
+    @include font-size($h6-font-size);
+}
+
+p {
+    margin: 0 0 $text-small-spacing;
+    @include font-size($p-font-size);
+    // @include break-word;
+}
+
+b,
+strong {
+    @include font-bold;
+}
+
+em,
+i {
+    font-style: italic;
+    // @include font-serif-italic;
+}
+
+a {
+    text-decoration: none;
+    // color: inherit;
+    color: $base-color-action;
+
+    &:active,
+    &:focus {
+        outline: none;
+    }
+}
+
+// blockquote {
+    // @include break-word;
+// }
+
+hr {
+    display: block;
+    height: 1px;
+    margin: $text-verylarge-spacing 0;
+    padding: 0;
+
+    border-bottom: 1px solid $color-gray-light;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}

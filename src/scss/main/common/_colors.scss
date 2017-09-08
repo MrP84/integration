@@ -1,0 +1,37 @@
+// common
+$color-black: #1a1917;
+$color-white: #fff;
+$color-gray: #494a4d;
+$color-gray-light: #949599;
+$color-gray-verylight: #e8e9ed;
+$color-gray-ultralight: #f0f1f5;
+$color-gray-dark: #353638;
+
+
+// client
+$color-amundi-lightblue: #009ee2;
+$color-amundi-darkblue: #0c1b49;
+$color-background-light: #fff;
+$color-background-dark: #242539;
+
+$color-blue: #41a3d2;
+
+$color-backdrop: rgba($color-background-light, .96);
+
+
+// social
+$color-facebook: #3b5998;
+$color-twitter: #55acee;
+$color-instagram: #2a5b83;
+
+
+// base colors
+$base-color-background: $color-background-light;
+$base-color-font: $color-black;
+$base-color-action: $color-blue;
+
+
+// shadows
+$button-shadow-blue:
+    0 10px 10px rgba($base-color-action, .22),
+    0 14px 28px rgba($base-color-action, .25);

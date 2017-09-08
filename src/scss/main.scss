@@ -1,44 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto);
+@charset 'UTF-8';
 
-$benoit: 21px;
-
-body{
-    font-family: 'Roboto', sans-serif;
-}
-
-.center{
-    text-align: center;
-    // font-size: 32px;
-    font-size: 2rem;
-}
-
-.logos{
-    img{
-      max-height: 200px;
-      padding: $benoit;
-    }
-}
-
-@media (min-width: 71.25em) {
-    p {
-      font-weight: bold;
-    }
-}
-
-@media (min-width: 71.25em) {
-    body {
-        background-color: white;
-    }
-}
-
-@media (min-width: 71.25em) {
-    body {
-        background-color: white;
-    }
-}
-
-@media (min-width: 71.25em) {
-    body {
-        background-color: white;
-    }
-}
+@import 'core/main'; // Common code shared accross all projects
+@import 'vendor/main'; // Site's specific libs
+@import 'main/main'; // Site's specific styles

@@ -1,0 +1,61 @@
+// Base font
+
+$base-font: 'Montserrat';
+$base-font-serif: 'Droid Serif';
+
+
+// Font face
+
+@include font-face($base-font, '../src/assets/fonts');
+@include font-face($base-font-serif, '../src/assets/fonts');
+
+
+// OS fonts
+// http://rachaelmoore.name/posts/design/css/web-safe-helvetica-font-stack/
+// http://stackoverflow.com/a/32660790
+
+$font-ios-light: -apple-system-body, -apple-system, 'HelveticaNeueLight', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'HelveticaNeue', 'Helvetica Neue', 'TeXGyreHerosLight';
+$font-ios-regular: -apple-system-body, -apple-system, 'HelveticaNeue', 'Helvetica Neue', 'TeXGyreHerosRegular';
+$font-ios-bold: -apple-system-body, -apple-system, 'HelveticaNeueBold', 'HelveticaNeue-Bold', 'Helvetica Neue Bold', 'HelveticaNeue', 'Helvetica Neue', 'TeXGyreHerosBold';
+
+$font-android-light: 'RobotoLight', 'Roboto-Light', 'Roboto Light', 'Roboto', 'TeXGyreHerosLight', 'Noto', 'Noto Sans', 'Noto', 'Droid Sans';
+$font-android-regular: 'Roboto', 'RobotoRegular', 'Roboto-Regular', 'Roboto Regular', 'TeXGyreHerosRegular', 'Noto', 'Noto Sans', 'Noto', 'Droid Sans';
+$font-android-bold: 'RobotoBold', 'Roboto-Bold', 'Roboto Bold', 'Roboto', 'TeXGyreHerosBold', 'Noto', 'Noto Sans', 'Noto', 'Droid Sans';
+
+
+// Fallbacks
+
+$font-fallback-sansserif: HelveticaNeue, Roboto, SegoeWP, Verdana, Helvetica, Tahoma, Geneva, Arial, sans-serif;
+$font-fallback-serif: 'Times New Roman', 'Palatino Linotype', 'Book Antiqua', Palatino, Times, Georgia, serif;
+
+
+// Mixins
+
+@mixin font-light {
+    font-family: $base-font, $font-android-light, $font-ios-light, $font-fallback-sansserif;
+    font-weight: 300;
+}
+
+@mixin font-regular {
+    font-family: $base-font, $font-android-regular, $font-ios-regular, $font-fallback-sansserif;
+    font-weight: 400;
+}
+
+@mixin font-bold {
+    font-family: $base-font, $font-android-bold, $font-ios-bold, $font-fallback-sansserif;
+    font-weight: 700;
+}
+
+@mixin font-serif {
+    font-family: $base-font-serif, $font-fallback-serif;
+    font-weight: 700;
+}
+
+@mixin font-serif-italic {
+    @include font-serif;
+    font-style: italic; // WARNING: might be buggy on ios
+}
+
+@mixin font-title {
+    @include font-serif-italic;
+}

@@ -1,0 +1,563 @@
+// Hardware-accelerated scroll container
+@mixin scroll-enhanced($direction: v, $advanced-optim: true, $children-optim: true, $force-scroll: false) {
+    @if $direction == h {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    @else {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    -webkit-overflow-scrolling: touch;
+
+    // avoid the iOS bug which allows content to always be scrollable
+    @if $force-scroll != true {
+        html.lock--scroll & {
+            -webkit-overflow-scrolling: auto;
+        }
+    }
+
+    @if $advanced-optim == true {
+        // hardware accelerated
+        @include backface-visibility(hidden);
+        will-change: transform;
+    }
+
+    @if $children-optim == true {
+        > * {
+            @include transform(translateZ(0));
+            // @include backface-visibility(hidden);
+        }
+    }
+}
+
+
+// Adaptations for miscellaneous devices
+@mixin device-old($class: $class-old, $os: null) {
+    @if $os == android {
+        html.#{$class}:not(.#{$class-ios}) & {
+            @content;
+        }
+    }
+    @else if $os == ios {
+        html.#{$class}.#{$class-ios} & {
+            @content;
+        }
+    }
+    @else {
+        html.#{$class} & {
+            @content;
+        }
+    }
+}
+@mixin device-recent($class: $class-old, $os: null) {
+    @if $os == android {
+        html:not(.#{$class}):not(.#{$class-ios}) & {
+            @content;
+        }
+    }
+    @else if $os == ios {
+        html:not(.#{$class}).#{$class-ios} & {
+            @content;
+        }
+    }
+    @else {
+        html:not(.#{$class}) & {
+            @content;
+        }
+    }
+}
+
+@mixin device-ios {
+    html.#{$class-ios} & {
+        @content;
+    }
+}
+@mixin device-android {
+    html.#{$class-android} & {
+        @content;
+    }
+}
+@mixin device-apple {
+    html[class^="#{$class-ios}"] &,
+    html[class*=" #{$class-ios}"] &,
+    html[class^="#{$class-safari}"] &,
+    html[class*=" #{$class-safari}"] & {
+        @content;
+    }
+}
+
+
+// WARNING: this one is a bit of a hack. We need to make sure that this
+// is applied only on the relevant breakpoints. The perfect solution would be to
+// declare a flex-basis using calc(), but browser support is not high
+// enough for now
+@mixin flex-wrapping($columns, $margin-left: 0, $disable-margins-h: false,  $disable-margins-v: false) {
+    $margin-space: ($columns - 1) * $margin-left;
+    $width: decimal-floor(((100% / $columns) - ($margin-space / $columns)), 2);
+
+    @include flex-grow(1);
+    @include flex-basis($width);
+    max-width: $width;
+
+    @if $disable-margins-h != true {
+        @if $margin-left != 0 {
+            margin-left: $margin-left;
+        }
+    }
+
+    @if $columns == 1 {
+        @if $disable-margins-v != true {
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+    @else if $columns > 1 {
+        // no left margin for the utmost left elements
+        @if $disable-margins-h != true {
+            &:nth-child(#{$columns}n+1) {
+                margin-left: 0;
+            }
+        }
+
+        @if $disable-margins-v != true {
+            // no bottom margin for the last n elements
+            &:nth-last-child(-n+#{$columns}) {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+
+// Fill up the entire space of the parent container
+@mixin full-space($position: absolute, $overflow: hidden, $dimensions: false) {
+    @if $position != null {
+        position: $position;
+    }
+
+    top: 0;
+    left: 0;
+
+    @if $dimensions == true {
+        height: 100%;
+        width: 100%;
+    }
+    @else {
+        right: 0;
+        bottom: 0;
+    }
+
+    @if $overflow != null {
+        overflow: $overflow;
+    }
+}
+
+
+// Shorcut for background cover with background-image
+@mixin cover-background($fallback: null, $contain: false) {
+    @if $contain == true {
+        background-size: contain;
+    }
+    @else {
+        background-size: cover;
+    }
+
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    @if $fallback {
+        background-image: url($fallback);
+    }
+}
+
+
+// Background type 'cover' with <img />, <video>...
+// WARNING: forget about IE8, issues with iOS 7
+@mixin cover-space($keep-compatibility: false, $ratio: h) {
+    @if ($keep-compatibility == true) {
+        position: absolute;
+        width: auto;
+        height: auto;
+        min-width: 100%;
+        min-height: 100%;
+        @include center;
+
+        @if $ratio == h {
+            max-width: none;
+            max-height: 100%;
+        }
+        @else if $ratio == v {
+            max-width: 100%;
+            max-height: none;
+        }
+    }
+    @else {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // WARNING: this one might break with transitions
+    }
+}
+
+
+// Custom ellipsis
+// Bourbon's one is adding 'display: inline-block;' which is often undesirable
+// This one also allows for multiline ellipsis on webkit browsers
+@mixin custom-ellipsis($line-clamp: 1, $italic: false, $italic-fontsize: 16px, $line-height: 1.2) {
+    /*! autoprefixer: off */
+    overflow: hidden;
+
+    @if $line-clamp == 1 {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-wrap: normal;
+    }
+    @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $line-clamp;
+        -webkit-box-orient: vertical;
+
+        @if $italic == true {
+            $italic-delta: $line-clamp * 1px;
+            max-height: round($italic-fontsize * $line-clamp * $line-height - $italic-delta);
+        }
+    }
+    /*! autoprefixer: on */
+}
+
+
+// Break words properly
+@mixin break-word {
+    // with the following one, the word will always break if it contains a hyphen
+    -webkit-word-break: break-word;
+    -webkit-word-wrap: break-word;
+    word-break: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+
+// Maintain a custom aspect ratio
+// Src: https://css-tricks.com/snippets/sass/maintain-aspect-ratio-mixin/
+// Another interesting solution: http://stackoverflow.com/a/20593342
+@mixin aspect-ratio($ratio-or-width, $height: null, $use-float: false) {
+    $padding: if($height,
+                 percentage($height/$ratio-or-width),
+                 percentage(1/$ratio-or-width)
+              );
+
+    @if use-float == true {
+        &::before {
+            content: '';
+            float: left;
+            padding-bottom: $padding;
+        }
+        &::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+    }
+    @else {
+        &::before {
+            content: '';
+            display: block;
+            padding-top: $padding;
+        }
+    }
+}
+
+
+// Append a mask to the element
+@mixin add-mask($url, $size: cover, $repeat: no-repeat, $position: center bottom) {
+    -webkit-mask-image: $url;
+    -webkit-mask-size: $size;
+    -webkit-mask-repeat: $repeat;
+    -webkit-mask-position: $position;
+    mask-image: $url;
+    mask-size: $size;
+    mask-repeat: $repeat;
+    mask-position: $position;
+    mask: $url $repeat $position / $size;
+}
+
+
+
+// Grayscale effect
+// $value requires percent units
+@mixin effect-grayscale($value, $transition: null, $duration: .5s) {
+    // WARNING: as per Bourbon's doc, we should NOT use shorthand mixin when transitioning properties need prefixing
+    // Unfortunately, Bourbon is still not prefixing the transitioning 'filter' property
+    // Another solution is to use 'all' as a property, but this can prove both messy and risky
+    @if ($transition) {
+        @include transition(all $duration ease);
+    }
+
+    // grayscale effect
+    // src: http://labs.voronianski.com/css3-grayscale/
+    // src: http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html
+    @if strip-units($value) < 20 {
+        filter: none; // IE 6-9
+    } @else {
+        filter: url(grayscale.svg); // Firefox 4+
+        filter: gray; // IE 6-9
+    }
+    -webkit-filter: grayscale($value);
+    -moz-filter: grayscale($value);
+    -ms-filter: grayscale($value);
+    -o-filter: grayscale($value);
+    filter: grayscale($value);
+}
+
+
+// Center vertically and/or horizontally an absolute/relative positioned element
+@mixin center($xy: xy, $position: absolute, $transform-3d: null) {
+    @if $position {
+        position: $position;
+    }
+
+    @if $xy == xy {
+        left: 50%;
+        top: 50%;
+        bottom: auto;
+        right: auto;
+
+        @if $transform-3d == true {
+            @include transform(translate3d(-50%, -50%, 0));
+        } @else {
+            @include transform(translateX(-50%) translateY(-50%));
+        }
+    }
+    @else if $xy == x {
+        left: 50%;
+        right: auto;
+
+        @if $transform-3d == true {
+            @include transform(translate3d(-50%, 0, 0));
+        } @else {
+            @include transform(translateX(-50%));
+        }
+    }
+    @else if $xy == y {
+        top: 50%;
+        bottom: auto;
+
+        @if $transform-3d == true {
+            @include transform(translate3d(0, -50%, 0));
+        } @else {
+            @include transform(translateY(-50%));
+        }
+    }
+}
+
+
+
+// Avoid breaking content when using column-count
+// src: http://stackoverflow.com/a/26637893
+@mixin column-avoid-breaking {
+    // overflow: hidden;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    -moz-column-break-inside:avoid;
+    column-break-inside:avoid;
+    break-inside: avoid;
+    break-inside: avoid-column;
+}
+
+
+// Dynamic font size
+@mixin font-size($size, $use-rem: true, $important: false) {
+    $flag: '';
+
+    @if $important == true {
+        $flag: '!important'
+    }
+
+    font-size: $size #{$flag}; // fallback
+
+    @if ($use-rem != false) {
+        font-size: rem($size) #{$flag};
+    }
+}
+@mixin font-size-fixed($size, $important: false) {
+    @include font-size($size, false, $important);
+}
+
+
+// Icon font smoothing
+@mixin font-smoothing {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+// Icon reset
+@mixin icon-reset($font-family: null) {
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-decoration: inherit;
+
+    @if $font-family != null {
+        font-family: $font-family;
+    }
+
+    text-align: center;
+    line-height: 1;
+
+    @include font-smoothing;
+
+    speak: none;
+}
+
+
+// Icon centered inside its parent container
+@mixin icon-fullspace($font-family: null) {
+    @include center;
+    margin: 0;
+    padding: 0;
+    @include icon-reset($font-family);
+}
+
+
+// Responsive image
+@mixin image-responsive($display: null) {
+    @if $display {
+        display: $display;
+    }
+
+    max-width: 100%;
+    height: auto;
+}
+
+
+// GPU hack
+@mixin hardware-acceleration($transform: null, $backface: null) {
+    @if $transform == true {
+        @include transform(translateZ(0));
+    }
+
+    @if $backface == true {
+        @include backface-visibility(hidden);
+    }
+}
+
+
+// Get rid of strange behaviors
+@mixin webkit-no-touch-callout {
+    -webkit-touch-callout: none;
+}
+
+// Src: http://stackoverflow.com/questions/5210481/disable-orange-outline-highlight-on-focus
+@mixin webkit-no-tap-highlight {
+    -webkit-tap-highlight-color: rgba(#000, 0);
+    -webkit-tap-highlight-color: transparent;
+    // outline: none;
+}
+
+
+@mixin text-size-adjust($value: 100%) {
+    @include prefixer(text-size-adjust, $value, getRequiredPrefixes());
+}
+
+
+// Prevent selection
+@mixin prevent-selection {
+    @include webkit-no-touch-callout;
+    @include webkit-no-tap-highlight;
+
+    @include user-select(none);
+    @include text-size-adjust(none);
+
+    &::-moz-selection {
+        background-color: transparent;
+        color: transparent;
+    }
+    &::selection,
+    & ::selection {
+        background-color: transparent;
+        color: transparent;
+    }
+}
+
+
+// Custom selection
+@mixin custom-selection($background-color, $text-color: #fff) {
+    // The 2 rule sets need to be kept separated
+    &::-moz-selection {
+        background-color: $background-color;
+        color: $text-color;
+        text-shadow: none;
+    }
+
+    &::selection,
+    & ::selection {
+        background-color: $background-color;
+        color: $text-color;
+        text-shadow: none;
+    }
+}
+
+
+// Background + relevant text shadow
+@mixin background-text-shadow($color: #333, $gradient: null, $gradient-color: null, $shadow-size: 2px, $darken: 10%) {
+    background-color: $color;
+    text-shadow: 0 $shadow-size 0 darken($color, $darken);
+
+    @if $gradient-color == null {
+        $gradient-color: darken($color, 8%);
+    }
+    @if $gradient == true {
+        @include linear-gradient($color, $gradient-color);
+    }
+}
+
+
+// Universal hover effect for desktop and mobile devices
+// based on Modernizr classes
+// WARNING: requires <body ontouchstart=""> or a JS touch lib (like FastClick)
+// in order to be able to use :active on any kind of tag (not just <a>)
+@mixin hover-universal($element-subselector: null, $html-classes...) {
+    $html-classes-selector: '';
+
+    @if $html-classes {
+        $html-classes-length: length($html-classes);
+
+        @if $html-classes-length > 0 {
+            @for $i from 1 through length($html-classes) {
+                $html-classes-selector: $html-classes-selector + '.' + nth($html-classes, $i);
+            }
+        }
+    }
+
+    // html.no-touch#{$html-classes-selector} &:focus,
+    // html#{$html-classes-selector}:not(.touch) &:hover,
+    $rule-notouch: 'html.no-touchevents#{$html-classes-selector} &:hover';
+    $rule-touch: 'html.touchevents#{$html-classes-selector} &:active';
+    $rule: $rule-notouch + ', ' + $rule-touch;
+
+    @if $element-subselector {
+        $rule: '&#{$element-subselector}, ' + $rule;
+    }
+
+    #{$rule} {
+        @content;
+    }
+}
+
+// Universal hover that work around webpack constraints
+// WARNING: disable hover effects on iOS unless you want to pay a visit to Flickerland
+@mixin webpack-hover-universal {
+    $rule-notouch: 'html:not([class*="#{$class-touch}"]):not([class*="#{$class-ios}"]) &:hover';
+    $rule-touch: 'html[class*="#{$class-touch}"]:not([class*="#{$class-ios}"]) &:active';
+    $rule: $rule-notouch + ', ' + $rule-touch;
+
+    #{$rule} {
+        @content;
+    }
+}
