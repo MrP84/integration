@@ -6,8 +6,8 @@ $base-font-serif: 'Droid Serif';
 
 // Font face
 
-@include font-face($base-font, '../src/assets/fonts');
-@include font-face($base-font-serif, '../src/assets/fonts');
+// @include font-face($base-font, '../src/assets/fonts');
+// @include font-face($base-font-serif, '../src/assets/fonts');
 
 
 // OS fonts

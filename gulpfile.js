@@ -19,7 +19,7 @@ var PATHS = {
         img: './src/assets/img/*',
         jsCode: './src/js/app/*.js',
         jsVendor: './src/js/vendor/*.js',
-        scss: './src/scss/*.scss'
+        scss: './src/scss/**/*.scss'
     }
 };
 
@@ -190,7 +190,7 @@ gulp.task('dev', function () {
  */
 gulp.task('prod', function () {
     var prodOptions = { type: '' };
-    
+
     // cleaningTask
     cleanDist(prodOptions)
         .then(function () {

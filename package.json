@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "Gulp boilerplate front-end dev Archriss",
   "author": "Archriss",
-  "dependencies": {},
+  "dependencies": {
+    "sweetalert2": "^6.6.10"
+  },
   "devDependencies": {
     "autoprefixer": "^7.1.4",
     "babel-eslint": "^7.2.3",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "babelify": "^7.3.0",
     "css-mqpacker": "^6.0.1",
     "cssnano": "^4.0.0-rc.2",
@@ -17,6 +20,7 @@
     "eslint": "^4.6.1",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "gulp": "^3.9.1",
