@@ -25,9 +25,17 @@
     
 ## Configuation de livereload
 
+### Google Chrome
+
 Pour que le livereload fonctionne sans serveur local (en ouvrant un fichier html directement par exemple), il faut penser à cocher "autoriser l'accès aux URL de fichier" dans les paramètres des extensions.
 
 ![Livereload](https://puu.sh/r6enB/5bd567da38.png)
+
+### Firefox
+
+Pour que le livereload fonctionne, il est nécessaire d'activer le plugin depuis la barre des tâches.
+
+![Livereload](https://imgur.com/3nwC3jG.png)
 
 ## Commandes du projet
 
