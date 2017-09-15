@@ -1,12 +1,26 @@
-var ENABLE_LIVE_RELOAD = true;
-var ENABLE_IMAGE_COMPRESSION = true;
+import gulp from 'gulp';
+import autoprefixer from 'autoprefixer';
+import browserify from 'browserify';
+import concat from 'gulp-concat';
+import cssnano from 'cssnano';
+import del from 'del';
+import gutil from 'gutil';
+import imagemin from 'gulp-imagemin';
+import livereload from 'gulp-livereload';
+import mqpacker from 'css-mqpacker';
+import pngquant from 'imagemin-pngquant';
+import postcss from 'gulp-postcss';
+import sass from 'gulp-sass';
+import sourcemaps from 'gulp-sourcemaps';
+import uglify from 'gulp-uglify';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
 
-var FILENAMES = {
-    jsCode: 'app.js',
-    jsVendor: 'vendor.js'
-};
+const ENABLE_LIVE_RELOAD = true;
 
-var PATHS = {
+const FILENAMES = { jsCode: 'app.js', jsVendor: 'vendor.js' };
+
+const PATHS = {
     dest: {
         global: './dist',
         imgFolder: 'img',
@@ -15,40 +29,22 @@ var PATHS = {
     },
     src: {
         assets: ['src/assets/**', '!src/assets/{img,img/**}'],
-        html: './src/html/*.html',
-        img: './src/assets/img/*',
-        jsCode: './src/js/app/*.js',
-        jsVendor: './src/js/vendor/*.js',
-        scss: './src/scss/**/*.scss'
+        html: 'src/html/*.html',
+        img: 'src/assets/img/*',
+        jsCode: ['src/js/**/*.js', '!src/js/{vendor,vendor/**}'],
+        jsEntry: 'src/js/index.js',
+        jsVendor: 'src/js/vendor/*.js',
+        scss: 'src/scss/**/*.scss'
     }
 };
 
-var gulp = require('gulp'),
-    autoprefixer = require('autoprefixer'),
-    babel = require('gulp-babel'),
-    babelify = require('babelify'),
-    browserify = require('gulp-browserify'),
-    concat = require('gulp-concat'),
-    cssnano = require('cssnano'),
-    del = require('del'),
-    imagemin = require('gulp-imagemin'),
-    livereload = require('gulp-livereload'),
-    mqpacker = require('css-mqpacker'),
-    pngquant = require('imagemin-pngquant'),
-    postcss = require('gulp-postcss'),
-    rename = require('gulp-rename'),
-    sass = require('gulp-sass'),
-    sourcemaps = require('gulp-sourcemaps'),
-    uglify = require('gulp-uglify');
-
 function html () {
-    return gulp.src(PATHS.src.html)
-        .pipe(livereload());
+    return gulp.src(PATHS.src.html).pipe(livereload());
 }
 gulp.task('html', html);
 
 function JSVendor (opts) {
-    var targetFolder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
+    const targetFolder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
     return gulp.src(PATHS.src.jsVendor)
         .pipe(concat(FILENAMES.jsVendor))
         .pipe(gulp.dest(PATHS.dest.global + '/' + targetFolder))
@@ -57,43 +53,61 @@ function JSVendor (opts) {
 gulp.task('JSVendor', JSVendor);
 
 function JSCode (opts) {
-    if (opts.type === 'changed') {
+    const development = opts.type === 'changed';
+    const bundler = browserify({ entries: PATHS.src.jsEntry, debug: development });
+
+    if (development) {
         // Development mode
-        return gulp.src(PATHS.src.jsCode)
-            .pipe(sourcemaps.init())
-            .pipe(browserify({ transform: ['babelify'] }))
-            .pipe(babel())
-            .pipe(concat(FILENAMES.jsCode))
-            .pipe(sourcemaps.write('.'))
+        return bundler
+            .transform('babelify', { presets: ['es2015'] })
+            .bundle()
+            .on('error', catchJSErrors)
+            .pipe(source('app.js'))
+            .pipe(buffer())
+            .pipe(sourcemaps.init({ loadMaps: true }))
+            .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(PATHS.dest.global + '/' + PATHS.dest.devFolder))
             .pipe(livereload());
     } else {
         // Production mode
-        return gulp.src(PATHS.src.jsCode)
-            .pipe(browserify({ transform: ['babelify'] }))
-            .pipe(babel())
-            .pipe(concat(FILENAMES.jsCode))
+        return bundler
+            .transform('babelify', { presets: ['es2015'] })
+            .bundle()
+            .on('error', catchJSErrors)
+            .pipe(source('app.js'))
+            .pipe(buffer())
             .pipe(uglify())
             .pipe(gulp.dest(PATHS.dest.global + '/' + PATHS.dest.prodFolder));
     }
 }
-gulp.task('concatJsCode', JSCode);
+gulp.task('JSCode', JSCode);
+
+function catchJSErrors (err) {
+    if (err instanceof SyntaxError) {
+        gutil.log('Syntax Error');
+        console.log(err.message);
+        console.log(err.codeFrame);
+    } else {
+        gutil.log('Error', err.message);
+    }
+    this.emit('end');
+}
 
 function copyAssets (opts) {
-    var folder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
+    const folder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
     return gulp.src(PATHS.src.assets)
         .pipe(gulp.dest(PATHS.dest.global + '/' + folder));
 }
 gulp.task('copyAssets', copyAssets);
 
 function cleanDist (opts) {
-    var folder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
+    const folder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
     return del(PATHS.dest.global + '/' + folder);
 }
 gulp.task('cleanDist', cleanDist);
 
 function minifyImages (opts) {
-    var destFolder = PATHS.dest.global + '/' + (opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder) + '/' + PATHS.dest.imgFolder;
+    const destFolder = PATHS.dest.global + '/' + (opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder) + '/' + PATHS.dest.imgFolder;
 
     return gulp.src(PATHS.src.img)
         .pipe(imagemin([
@@ -106,7 +120,7 @@ function minifyImages (opts) {
 gulp.task('minifyImages', minifyImages);
 
 function css (opts) {
-    var postcssPlugins = [
+    const postcssPlugins = [
         mqpacker({
             sort: true
         }),
@@ -155,10 +169,10 @@ function images () {
 gulp.task('images', images);
 
 gulp.task('dev', function () {
-    var devOptions = { type: 'changed' };
+    const devOptions = { type: 'changed' };
     // Launches tasks once before watching (creates files if needed)
     cleanDist(devOptions)
-        .then(function () {
+        .then(() => {
             minifyImages(devOptions);
             copyAssets(devOptions);
             minifyImages(devOptions);
@@ -167,42 +181,36 @@ gulp.task('dev', function () {
             JSVendor(devOptions);
             JSCode(devOptions);
             html(devOptions);
-        }).catch(function (err) {
-            throw new err;
-        });
+        })
+        .catch((err) => { throw new Error(err); });
 
     if (ENABLE_LIVE_RELOAD) {
-        livereload.listen({
-            start: true
-        });
+        livereload.listen({ start: true });
     }
 
-    gulp.watch(PATHS.src.jsVendor, function (opts) { JSVendor(opts); });
-    gulp.watch(PATHS.src.jsCode, function (opts) { JSCode(opts); });
-    gulp.watch(PATHS.src.scss, function (opts) { css(opts); });
-    gulp.watch(PATHS.src.assets, function (opts) { copyAssets(opts); });
-    gulp.watch(PATHS.src.img, function (opts) { minifyImages(opts); });
-    gulp.watch(PATHS.src.html, function (opts) { html(opts); });
+    gulp.watch(PATHS.src.jsVendor, JSVendor);
+    gulp.watch(PATHS.src.jsCode, JSCode);
+    gulp.watch(PATHS.src.scss, css);
+    gulp.watch(PATHS.src.assets, copyAssets);
+    gulp.watch(PATHS.src.img, minifyImages);
+    gulp.watch(PATHS.src.html, html);
 });
 
 /**
  * Production task
  */
 gulp.task('prod', function () {
-    var prodOptions = { type: '' };
+    const prodOptions = { type: '' };
 
-    // cleaningTask
     cleanDist(prodOptions)
-        .then(function () {
+        .then(() => {
             minifyImages(prodOptions);
             copyAssets(prodOptions);
             css(prodOptions);
             JSVendor(prodOptions);
             JSCode(prodOptions);
         })
-        .catch(function (err) {
-            throw new err;
-        });
+        .catch((err) => { throw new Error(err); });
 });
 
 gulp.task('watch', ['dev']);
@@ -211,4 +219,4 @@ gulp.task('build', ['prod']);
 /**
  * Default task
  */
-gulp.task('default', ['css', 'JSVendor', 'concatJsCode', 'images'], function () {});
+gulp.task('default', ['css', 'JSVendor', 'JSCode', 'images'], function () {});
