@@ -5,6 +5,9 @@
         "sourceType": "module",
         "extends": ["eslint:recommended"]
     },
+    "plugins": [
+        "import"
+    ],
     "extends": [
         "standard"
     ],
