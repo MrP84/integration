@@ -1,9 +1,7 @@
-export default function customAlert (message = 'OMG') {
-    console.log(message);
-}
+import swal from 'sweetalert2';
 
-export function otherAlert (message = 'It works') {
-    console.log(message);
+export default function () {
+    setTimeout(() => {
+        swal('Seconde alerte après 5 secondes');
+    }, 5000);
 }
-
-export const test = 'test';
