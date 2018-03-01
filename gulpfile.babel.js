@@ -8,7 +8,6 @@ import gutil from 'gutil';
 import imagemin from 'gulp-imagemin';
 import livereload from 'gulp-livereload';
 import mqpacker from 'css-mqpacker';
-import pngquant from 'imagemin-pngquant';
 import postcss from 'gulp-postcss';
 import sass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
@@ -111,10 +110,19 @@ function minifyImages (opts) {
 
     return gulp.src(PATHS.src.img)
         .pipe(imagemin([
-            imagemin.gifsicle({interlaced: true}),
-            imagemin.jpegtran({progressive: true}),
-            imagemin.optipng({optimizationLevel: 5})
-        ]))
+            imagemin.gifsicle({ interlaced: true, optimizationLevel: 2 }),
+            imagemin.jpegtran({ progressive: true }),
+            imagemin.optipng({ optimizationLevel: 4 }),
+            imagemin.svgo({
+                // https://github.com/svg/svgo#what-it-can-do
+                plugins: [
+                    { removeViewBox: true },
+                    { cleanupIDs: false }
+                ]
+            })
+        ], {
+            verbose: false
+        }))
         .pipe(gulp.dest(destFolder));
 }
 gulp.task('minifyImages', minifyImages);
@@ -125,7 +133,7 @@ function css (opts) {
             sort: true
         }),
         autoprefixer({
-            browsers: ['last 1 version']
+            browsers: ['last 3 versions', 'Firefox >= 50', 'IE 11']
         }),
         cssnano({
             preset: ['default', {
@@ -155,26 +163,11 @@ function css (opts) {
 }
 gulp.task('css', css);
 
-function images () {
-    return gulp.src(PATHS.src.img)
-        .pipe(imagemin({
-            progressive: true,
-            svgoPlugins: [{
-                removeViewBox: false
-            }],
-            use: [pngquant()]
-        }))
-        .pipe(gulp.dest(PATHS.dest.img));
-}
-gulp.task('images', images);
-
 gulp.task('dev', function () {
     const devOptions = { type: 'changed' };
     // Launches tasks once before watching (creates files if needed)
     cleanDist(devOptions)
         .then(() => {
-            minifyImages(devOptions);
-            copyAssets(devOptions);
             minifyImages(devOptions);
             copyAssets(devOptions);
             css(devOptions);
@@ -219,4 +212,4 @@ gulp.task('build', ['prod']);
 /**
  * Default task
  */
-gulp.task('default', ['css', 'JSVendor', 'JSCode', 'images'], function () {});
+gulp.task('default', ['minifyImages', 'css', 'JSVendor', 'JSCode'], function () {});
