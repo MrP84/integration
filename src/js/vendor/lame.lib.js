@@ -1,1 +1,0 @@
-console.log("Erase me, I'm not published on NPM :'(");
