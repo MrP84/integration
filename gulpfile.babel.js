@@ -133,7 +133,8 @@ function css (opts) {
             sort: true
         }),
         autoprefixer({
-            browsers: ['last 3 versions', 'Firefox >= 50', 'IE 11']
+            browsers: ['last 3 versions', 'Firefox >= 50', 'IE 11'],
+            flexbox: 'no-2009'
         }),
         cssnano({
             preset: ['default', {
