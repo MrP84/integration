@@ -29,7 +29,7 @@ const PATHS = {
     src: {
         assets: ['src/assets/**', '!src/assets/{img,img/**}'],
         html: 'src/html/*.html',
-        img: 'src/assets/img/*',
+        img: 'src/assets/img/**/*',
         jsCode: ['src/js/**/*.js', '!src/js/{vendor,vendor/**}'],
         jsEntry: 'src/js/index.js',
         jsVendor: 'src/js/vendor/*.js',
