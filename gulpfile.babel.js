@@ -135,15 +135,21 @@ function css (opts) {
         autoprefixer({
             browsers: ['last 3 versions', 'Firefox >= 50', 'IE 11'],
             flexbox: 'no-2009'
-        }),
-        cssnano({
-            preset: ['default', {
-                discardComments: {
-                    removeAll: true
-                }
-            }]
         })
     ];
+
+    // Production mode -> minify CSS
+    if (opts.type !== 'changed') {
+        postcssPlugins.push(
+            cssnano({
+                preset: ['default', {
+                    discardComments: {
+                        removeAll: false // loud comments are needed to turn autoprefixer off
+                    }
+                }]
+            })
+        );
+    }
 
     if (opts.type === 'changed') {
         // Development mode
