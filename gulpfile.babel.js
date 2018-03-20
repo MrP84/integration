@@ -32,7 +32,7 @@ const PATHS = {
         img: 'src/assets/img/**/*',
         jsCode: ['src/js/**/*.js', '!src/js/{vendor,vendor/**}'],
         jsEntry: 'src/js/index.js',
-        jsVendor: 'src/js/vendor/*.js',
+        jsVendor: 'src/js/vendor/**/*.js',
         scss: 'src/scss/**/*.scss'
     }
 };
@@ -43,11 +43,21 @@ function html () {
 gulp.task('html', html);
 
 function JSVendor (opts) {
-    const targetFolder = opts.type === 'changed' ? PATHS.dest.devFolder : PATHS.dest.prodFolder;
-    return gulp.src(PATHS.src.jsVendor)
-        .pipe(concat(FILENAMES.jsVendor))
-        .pipe(gulp.dest(PATHS.dest.global + '/' + targetFolder))
-        .pipe(livereload());
+    const development = opts.type === 'changed';
+
+    if (development) {
+        // Development mode
+        return gulp.src(PATHS.src.jsVendor)
+            .pipe(concat(FILENAMES.jsVendor))
+            .pipe(gulp.dest(PATHS.dest.global + '/' + PATHS.dest.devFolder))
+            .pipe(livereload());
+    } else {
+        // Production mode
+        return gulp.src(PATHS.src.jsVendor)
+            .pipe(concat(FILENAMES.jsVendor))
+            .pipe(uglify())
+            .pipe(gulp.dest(PATHS.dest.global + '/' + PATHS.dest.prodFolder));
+    }
 }
 gulp.task('JSVendor', JSVendor);
 
