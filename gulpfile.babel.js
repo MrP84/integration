@@ -33,7 +33,8 @@ const PATHS = {
         jsCode: ['src/js/**/*.js', '!src/js/{vendor,vendor/**}'],
         jsEntry: 'src/js/index.js',
         jsVendor: 'src/js/vendor/**/*.js',
-        scss: 'src/scss/**/*.scss'
+        scss: 'src/scss/**/*.scss',
+        templates: '../templates/**/*.twig'
     }
 };
 
@@ -41,6 +42,11 @@ function html () {
     return gulp.src(PATHS.src.html).pipe(livereload());
 }
 gulp.task('html', html);
+
+function templates () {
+    return gulp.src(PATHS.src.templates).pipe(livereload());
+}
+gulp.task('templates', templates);
 
 function JSVendor (opts) {
     const development = opts.type === 'changed';
@@ -191,6 +197,7 @@ gulp.task('dev', function () {
             JSVendor(devOptions);
             JSCode(devOptions);
             html(devOptions);
+            templates(devOptions);
         })
         .catch((err) => { throw new Error(err); });
 
@@ -204,6 +211,7 @@ gulp.task('dev', function () {
     gulp.watch(PATHS.src.assets, copyAssets);
     gulp.watch(PATHS.src.img, minifyImages);
     gulp.watch(PATHS.src.html, html);
+    gulp.watch(PATHS.src.templates, templates);
 });
 
 /**
