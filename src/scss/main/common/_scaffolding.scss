@@ -1,0 +1,100 @@
+// html and body specific styles
+body {
+    background-color: $color-background;
+    // overflow: hidden;
+
+    // Avoid visible rectangle when taping on iOS/Android
+    @include webkit-no-tap-highlight;
+
+    // Style scrollbar: https://css-tricks.com/almanac/properties/s/scrollbar/
+    // ::-webkit-scrollbar-thumb {
+    //     background-color: $color-black;
+    // }
+}
+
+
+* {
+    // 'border-box' modeleverywhere
+    box-sizing: border-box;
+
+    &::after,
+    &::before {
+        box-sizing: border-box;
+    }
+
+    // avoid residual margins
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    // custom selection color
+    @include custom-selection($color-active);
+
+    // custom focus color
+    // &:focus {
+    //     outline: none;
+    //     border: 1px solid $color-highlight;
+    // }
+
+    // Flexbox fix
+    // https://www.npmjs.com/package/postcss-flexbugs-fixes
+    // html.#{$class-ie} & {
+    //     flex-shrink: 1;
+    // }
+}
+
+
+// Remove the gap between audio, canvas, iframes, images, videos and the bottom of their containers
+// https://github.com/h5bp/html5-boilerplate/issues/440
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+
+// Set max-width for these elements
+audio,
+canvas,
+figure,
+iframe,
+img,
+svg,
+video,
+picture {
+    max-width: 100%;
+}
+
+
+// Preserve ratio of images and pictures
+img,
+figure,
+picture {
+    margin: 0;
+    height: auto;
+}
+
+
+// Remove default fieldset styles.
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+
+// Disable resizing of textareas.
+textarea {
+    resize: vertical;
+}
+
+
+// Avoid lists' default styling
+ul,
+ol {
+    @include list-reset;
+}
+

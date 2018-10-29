@@ -1,16 +1,17 @@
-$base-font-size: 16px !default;
+html {
+    // Let's use rem units
+    font-size: 16px; // $base-font-size
+}
 
-// http://www.modularscale.com/
-$base-font-size-title: 14px;
-$font-size-ratio: 1.125;
+body {
+    // Default font rules
+    color: $color-text-primary;
+    @include font-light;
+    @include font-smoothing;
 
-$h1-font-size: round(font-ratio(2, $font-size-ratio, $base-font-size-title));
-$h2-font-size: round(font-ratio(1, $font-size-ratio, $base-font-size-title));
-$h3-font-size: round(font-ratio(0, $font-size-ratio, $base-font-size-title));
-$h4-font-size: round(font-ratio(-1, $font-size-ratio, $base-font-size-title));
-$h5-font-size: round(font-ratio(-2, $font-size-ratio, $base-font-size-title));
-$h6-font-size: round(font-ratio(-3, $font-size-ratio, $base-font-size-title));
-$p-font-size: $base-font-size; // 15px;
+    // Avoid visible rectangle when taping on iOS/Android
+    @include webkit-no-tap-highlight;
+}
 
 h1,
 h2,
@@ -18,61 +19,133 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 0 0 $text-large-spacing;
+    margin-top: 0;
+    margin-bottom: $text-spacing-l;
+    @include font-title;
     line-height: $heading-line-height;
-    font-weight: normal;
     // @include break-word;
+
+    @include media-print {
+        page-break-after: avoid;
+        @include column-avoid-breaking; // page-break-inside: avoid;
+    }
 }
 
 h1 {
-    @include font-title;
     @include font-size($h1-font-size);
-    letter-spacing: .05em;
-    text-align: center;
-    text-transform: uppercase;
+
+    @include media-print {
+        // page-break-before: always;
+        @include font-size-fixed(
+            $h1-font-size-print,
+            $h1-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
+
 h2 {
     @include font-size($h2-font-size);
+
+    @include media-print {
+        @include font-size-fixed(
+            $h2-font-size-print,
+            $h2-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
+
 h3 {
     @include font-size($h3-font-size);
+
+    @include media-print {
+        @include font-size-fixed(
+            $h3-font-size-print,
+            $h3-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
+
 h4 {
     @include font-size($h4-font-size);
+
+    @include media-print {
+        @include font-size-fixed(
+            $h4-font-size-print,
+            $h4-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
+
 h5 {
     @include font-size($h5-font-size);
+
+    @include media-print {
+        @include font-size-fixed(
+            $h5-font-size-print,
+            $h5-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
+
 h6 {
     @include font-size($h6-font-size);
+
+    @include media-print {
+        @include font-size-fixed(
+            $h6-font-size-print,
+            $h6-font-size-print * $heading-line-height,
+            true
+        );
+    }
 }
 
 p {
-    margin: 0 0 $text-small-spacing;
+    margin-top: 0;
+    margin-bottom: $text-spacing-s;
     @include font-size($p-font-size);
+    line-height: $base-line-height;
     // @include break-word;
+
+    @include media-print {
+        @include font-size-fixed(
+            $p-font-size-print,
+            $p-font-size-print * $base-line-height
+        );
+    }
+}
+
+em,
+i {
+    // @include font-light-italic;
 }
 
 b,
 strong {
     @include font-bold;
-}
 
-em,
-i {
-    font-style: italic;
-    // @include font-serif-italic;
+    em,
+    i {
+        // @include font-bold-italic;
+    }
 }
 
 a {
+    color: inherit;
     text-decoration: none;
-    // color: inherit;
-    color: $base-color-action;
 
-    &:active,
-    &:focus {
+    &:active {
         outline: none;
     }
+}
+
+figcaption {
+    @include font-serif-italic;
+    line-height: $heading-line-height;
 }
 
 // blockquote {
@@ -82,11 +155,18 @@ a {
 hr {
     display: block;
     height: 1px;
-    margin: $text-verylarge-spacing 0;
+    margin: $text-spacing-l 0;
     padding: 0;
 
     border-bottom: 1px solid $color-gray-light;
     border-left: none;
     border-right: none;
     border-top: none;
+}
+
+table,
+figure {
+    @include media-print {
+        @include column-avoid-breaking; // page-break-inside: avoid;
+    }
 }

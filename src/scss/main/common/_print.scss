@@ -1,0 +1,44 @@
+// https://www.smashingmagazine.com/2011/11/how-to-set-up-a-print-style-sheet/
+// https://www.smashingmagazine.com/2015/01/designing-for-print-with-css/
+// https://www.smashingmagazine.com/2013/03/tips-and-tricks-for-print-style-sheets/
+
+@page {
+    size: A4 portrait;
+    margin: 2cm 2.5cm;
+
+    // These declarations don't seem to be supported ATM
+    @bottom-left {
+        content: 'Page provenant du site';
+        margin: 10pt 0 30pt 0;
+        border-top: .25pt solid $color-text-primary;
+        color: $color-text-primary;
+        font-size: 9pt;
+        @include font-serif-italic;
+    }
+    @bottom-right {
+        content: 'Page ' counter(page) '/' counter(pages);
+        margin: 10pt 0 30pt 0;
+        border-top: .25pt solid $color-text-primary;
+        color: $color-text-primary;
+        font-size: 9pt;
+    }
+}
+
+@include media-print {
+
+    body {
+
+        // Print background colors
+        // https://stackoverflow.com/a/43399872/8412141
+        // https://stackoverflow.com/a/39710495/8412141
+        -webkit-print-color-adjust: exact; // Chrome, Safari
+        color-adjust: exact; // Firefox
+    }
+
+    video,
+    audio,
+    object,
+    embed {
+        @include hidden;
+    }
+}

@@ -1,3 +1,84 @@
+// Flex helpers
+@mixin flex-column($full-cross-axis: false, $full-axis: false) {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+        // Prevent inner content from being bigger than what flex size allows
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1108514
+        min-height: 0;
+
+        @if $full-cross-axis == true {
+            width: 100%;
+        }
+
+        @if $full-axis == true {
+            height: 100%;
+        }
+    }
+}
+@mixin flex-row($full-cross-axis: false, $full-axis: false) {
+    display: flex;
+    flex-direction: row;
+
+    > * {
+        // Prevent inner content from being bigger than what flex size allows
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1108514
+        min-width: 0;
+
+        @if $full-cross-axis == true {
+            height: 100%;
+        }
+
+        @if $full-axis == true {
+            width: 100%;
+        }
+    }
+}
+
+
+// Fix an IE-specific bug with flex
+// https://github.com/philipwalton/flexbugs
+// https://github.com/philipwalton/flexbugs/issues/71
+// https://stackoverflow.com/a/39305205/8412141
+@mixin flex-fix($value, $basis-hack: false) {
+    flex: $value;
+
+    html.#{$class-ie} & {
+        flex: $value 1 auto;
+
+        @if $basis-hack == true {
+            flex-basis: 0;
+        }
+    }
+
+    // Other solution
+    // Better overall results, but strongest selector on other browsers
+    // html:not(.#{$class-ie}) & {
+    //     flex: $value;
+    // }
+    // html.#{$class-ie} & {
+    //     flex-grow: $value;
+    // }
+}
+
+
+// List reset
+@mixin list-reset {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+// Hidden for both screens and readers
+@mixin hidden {
+    pointer-events: none;
+    display: none !important;
+    visibility: hidden;
+}
+
+
 // Hardware-accelerated scroll container
 @mixin scroll-enhanced($direction: v, $advanced-optim: true, $children-optim: false, $force-scroll: false) {
     @if $direction == h {
@@ -193,34 +274,6 @@
     mask-repeat: $repeat;
     mask-position: $position;
     mask: $url $repeat $position / $size;
-}
-
-
-
-// Grayscale effect
-// $value requires percent units
-@mixin effect-grayscale($value, $transition: null, $duration: .5s) {
-    // WARNING: as per Bourbon's doc, we should NOT use shorthand mixin when transitioning properties need prefixing
-    // Unfortunately, Bourbon is still not prefixing the transitioning 'filter' property
-    // Another solution is to use 'all' as a property, but this can prove both messy and risky
-    @if ($transition) {
-        transition: all $duration ease;
-    }
-
-    // grayscale effect
-    // src: http://labs.voronianski.com/css3-grayscale/
-    // src: http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html
-    @if strip-unit($value) < 20 {
-        filter: none; // IE 6-9
-    } @else {
-        filter: url(grayscale.svg); // Firefox 4+
-        filter: gray; // IE 6-9
-    }
-    -webkit-filter: grayscale($value);
-    -moz-filter: grayscale($value);
-    -ms-filter: grayscale($value);
-    -o-filter: grayscale($value);
-    filter: grayscale($value);
 }
 
 

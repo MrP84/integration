@@ -1,40 +1,55 @@
-// sizes
-$status-bar-shift: 20px;
-
-$header-height: 80px;
-$navbar-height: 70px;
-
-$input-height: 52px;
-$banner-max-width: 600px;
-$list-entry-border-radius: 4px;
-
-$img-width-max: 1400px;
-
-// font size
+// Base sizes
 $base-font-size: 16px;
 
-// TODO: check if sizes are still ok when using modular scale (see _typograhy.scss)
-// $h1-font-size: 70px;
-// $h2-font-size: 34px;
-// $h3-font-size: 22px;
-// $h4-font-size: 18px;
-// $h5-font-size: 14px;
-// $h6-font-size: 12px;
-// $p-font-size: 15px;
+
+// html classes
+$class-mobile: 'ismobile';
+$class-ios: 'isios';
+$class-android: 'isandroid';
+$class-safari: 'issafari';
+$class-old: 'iscrappy';
+$class-ie: 'isie';
+
+$class-touch: 'istouch';
+$class-touch-probable: 'isprobabletouch';
+
+$class-scroll-lock: 'lock-scroll';
 
 
-// margins/paddings
-$content-margin: 11px;
+// Bourbon config
+// Modular scale ratios: https://github.com/thoughtbot/bourbon/blob/master/core/bourbon/helpers/_scales.scss
+$bourbon: (
+    'global-font-file-formats': ('ttf', 'woff2', 'woff'),
+    'modular-scale-base': $base-font-size,
+    'modular-scale-ratio': $minor-third
+);
 
-$text-small-spacing: .25em;
-$text-large-spacing: .5em;
-$text-verylarge-spacing: 1em;
-$text-ultralarge-spacing: 2em;
 
+// fonts
+$p-font-size: $base-font-size;
+$h6-font-size: modular-scale(1);
+$h5-font-size: modular-scale(2);
+$h4-font-size: modular-scale(3);
+$h3-font-size: modular-scale(4);
+$h2-font-size: modular-scale(5);
+$h1-font-size: modular-scale(6);
 
-// line-heights
+$p-font-size-print: 12pt;
+$h6-font-size-print: 12pt;
+$h5-font-size-print: 13pt;
+$h4-font-size-print: 14pt;
+$h3-font-size-print: 16pt;
+$h2-font-size-print: 18pt;
+$h1-font-size-print: 24pt;
+
 $base-line-height: 1.4;
 $heading-line-height: 1.2;
+
+$text-spacing-s: .25em;
+$text-spacing-m: .5em;
+$text-spacing-l: 1em;
+$text-spacing-xl: 1.5em;
+$text-spacing-xxl: 2em;
 
 
 // durations
@@ -48,10 +63,8 @@ $image-transition-duration: .6s;
 $z-layers: (
     'modal': 40,
     'menu': 30,
-    'menu-overlay': 29,
     'loader': 20,
     'header': 10,
-    'qrscan': 5,
     'above': 1,
     'base': 0,
     'below': -1

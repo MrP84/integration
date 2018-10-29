@@ -1,45 +1,52 @@
-@include keyframes(spin) {
-    0% { @include transform(rotate(0deg)); }
-    100% { @include transform(rotate(360deg)); }
-};
-
-@include keyframes(grow-fade) {
-  0% { @include transform(scaleY(0)); opacity:0; }
-  50% { @include transform(scaleY(1)); opacity:1; }
-  100% { @include transform(scaleY(0)); opacity:0; }
+@keyframes blink {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    50% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
-@include keyframes(shrink) {
-    15% { @include transform(scale(1)); }
-    50% { @include transform(scale(.9)); }
-    85% { @include transform(scale(1)); }
+@keyframes slide-up-fade {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
 }
 
-@include keyframes(left-to-right) {
-    0% { @include transform(translateX(-50%)); }
-    50% { @include transform(translateX(50%)); }
-    100% { @include transform(translateX(-50%)); }
+@keyframes bounce-to-stop {
+    0% { transform: translate3d(0, 0, 0); }
+    15% { transform: translate3d(0, -50%, 0) scaleX(1.2); }
+    30% { transform: translate3d(0, 0, 0); }
+    45% { transform: translate3d(0, -30%, 0) scaleX(1.1); }
+    60% { transform: translate3d(0, 0, 0); }
+    75% { transform: translate3d(0, -10%, 0) scaleX(1.05); }
+    100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes marker-shadow-anim {
+    0% { transform: scale(1); }
+    15% { transform: scale(0.5); }
+    30% { transform: scale(1); }
+    45% { transform: scale(0.7); }
+    60% { transform: scale(1); }
+    75% { transform: scale(0.9); }
+    100% { transform: scale(1); }
 }
 
-@include keyframes(slide-in) {
-    0% { @include transform(translate3d(60px, 0, 0)); }
-    100% { @include transform(translate3d(0, 0, 0)); }
+@keyframes carousel-prev-anim {
+    0% { transform: translate3d(0, 0, 0); opacity: 1; }
+    30% { transform: translate3d(-100%, 0, 0); opacity: 0; }
+    60% { transform: translate3d(100%, 0, 0); opacity: 0; }
+    100% { transform: translate3d(0, 0, 0); opacity: 1; }
 }
-
-@include keyframes(slide-up) {
-    0% { @include transform(translate3d(0, 100%, 0)); }
-    100% { @include transform(translate3d(0, 0, 0)); }
-}
-
-@include keyframes(bounce-in) {
-  0% { @include transform(scale(0)); }
-  60% { @include transform(scale(1.2)); }
-  100% { @include transform(scale(1)); }
-}
-
-@include keyframes(pulsate) {
-  0% { opacity: 0; @include transform(scale(0));}
-  30% { opacity: 1; }
-  80% { opacity: 0; @include transform(scale(1));}
-  100% { opacity: 0; @include transform(scale(1));}
+@keyframes carousel-next-anim {
+    0% { transform: translate3d(0, 0, 0); opacity: 1; }
+    30% { transform: translate3d(100%, 0, 0); opacity: 0; }
+    60% { transform: translate3d(-100%, 0, 0); opacity: 0; }
+    100% { transform: translate3d(0, 0, 0); opacity: 1; }
 }
