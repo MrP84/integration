@@ -99,7 +99,7 @@
 //   $ease:          easing function to use when calculating value
 //                   helpful for fine-tuning some widths in the mid-range
 @mixin spread($property, $property-min, $property-max, $dimension: min-width, $dimension-min: 400px, $dimension-max: 1400px, $default-value: true, $precision: 50px, $ease: linear) {
-    $total-iterations: abs(strip-units(ceil(($dimension-max - $dimension-min) / $precision)));
+    $total-iterations: abs(strip-unit(ceil(($dimension-max - $dimension-min) / $precision)));
     $max-dimension: $dimension == max-width or $dimension == max-height;
 
     @if $default-value {

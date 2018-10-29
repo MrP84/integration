@@ -1,3 +1,21 @@
+// From Bourbon (function was remove in v5)
+//https://github.com/thoughtbot/bourbon/blob/v4.3.4/app/assets/stylesheets/functions/_px-to-rem.scss
+// Convert pixels to rems
+// eg. for a relational value of 12px write rem(12)
+// Assumes $em-base is the font-size of <html>
+@function rem($pxval, $base: 16px) {
+    @if not unitless($pxval) {
+        $pxval: strip-unit($pxval); // 'strip-units' has been renamed to 'strip-unit' in v5
+    }
+
+    @if not unitless($base) {
+        $base: strip-unit($base); // 'strip-units' has been renamed to 'strip-unit' in v5
+    }
+
+    @return ($pxval / $base) * 1rem;
+}
+
+
 // Return z-index according to a custom map
 // http://www.sitepoint.com/better-solution-managing-z-index-sass/
 @function get-z($layer) {

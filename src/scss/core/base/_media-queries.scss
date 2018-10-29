@@ -2,32 +2,33 @@
 $screen-s-breakpoint-max: 479px;
 $screen-m-breakpoint-max: 719px;
 $screen-l-breakpoint-max: 999px;
+$screen-xl-breakpoint-max: 1399px;
+$screen-xxl-breakpoint-max: 1799px;
 
 $screen-m-breakpoint-min: $screen-s-breakpoint-max + 1;
 $screen-l-breakpoint-min: $screen-m-breakpoint-max + 1;
 $screen-xl-breakpoint-min: $screen-l-breakpoint-max + 1;
-
-
-// columns
-$screen-s-columns: 4;
-$screen-m-columns: 8;
-$screen-l-columns: 12;
+$screen-xxl-breakpoint-min: $screen-xl-breakpoint-max + 1;
+$screen-xxxl-breakpoint-min: $screen-xxl-breakpoint-max + 1;
 
 
 // rules
-// @import "libs/neat/neat-helpers"; // required for new-breakpoint()
-$screen-s-rule-max: new-breakpoint(max-width $screen-s-breakpoint-max);
-$screen-m-rule-max: new-breakpoint(max-width $screen-m-breakpoint-max);
-$screen-l-rule-max: new-breakpoint(max-width $screen-l-breakpoint-max);
+$screen-s-rule-max: "max-width: " + $screen-s-breakpoint-max;
+$screen-m-rule-max: "max-width: " + $screen-m-breakpoint-max;
+$screen-l-rule-max: "max-width: " + $screen-l-breakpoint-max;
+$screen-xl-rule-max: "max-width: " + $screen-xl-breakpoint-max;
+$screen-xxl-rule-max: "max-width: " + $screen-xxl-breakpoint-max;
 
-$screen-m-rule-min: new-breakpoint(min-width $screen-m-breakpoint-min);
-$screen-l-rule-min: new-breakpoint(min-width $screen-l-breakpoint-min);
-$screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
+$screen-m-rule-min: "min-width: " + $screen-m-breakpoint-min;
+$screen-l-rule-min: "min-width: " + $screen-l-breakpoint-min;
+$screen-xl-rule-min: "min-width: " + $screen-xl-breakpoint-min;
+$screen-xxl-rule-min: "min-width: " + $screen-xxl-breakpoint-min;
+$screen-xxxl-rule-min: "min-width: " + $screen-xxxl-breakpoint-min;
 
 
 // mixins
-@mixin media-min($breakpoint: M, $html-class: null) {
-    $rule: new-breakpoint(min-width $layout-width-min);
+@mixin media-min($breakpoint: M, $html-class: null, $print: null) {
+    $rule: "min-width: 320px";
 
     @if $breakpoint == M {
         $rule: $screen-m-rule-min;
@@ -38,11 +39,19 @@ $screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
     @else if $breakpoint == XL {
         $rule: $screen-xl-rule-min;
     }
+    @else if $breakpoint == XXL {
+        $rule: $screen-xxl-rule-min;
+    }
+    @else if $breakpoint == XXXL {
+        $rule: $screen-xxxl-rule-min;
+    }
     @else {
-        $rule: new-breakpoint(min-width $breakpoint);
+        $rule: "min-width: " + #{$breakpoint};
     }
 
-    @include media($rule) {
+    $query: "screen and (" + $rule + ") ";
+
+    @media #{$query} {
         @if $html-class {
             html.#{$html-class} & {
                 @content;
@@ -51,10 +60,16 @@ $screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
             @content;
         }
     }
+
+    @if $print == true {
+        @media print {
+            @content;
+        }
+    }
 }
 
-@mixin media-max($breakpoint: M, $html-class: null) {
-    $rule: new-breakpoint(max-width $layout-width-max);
+@mixin media-max($breakpoint: M, $html-class: null, $print: null) {
+    $rule: "max-width: 1920px";
 
     @if $breakpoint == S {
         $rule: $screen-s-rule-max;
@@ -65,38 +80,68 @@ $screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
     @else if $breakpoint == L {
         $rule: $screen-l-rule-max;
     }
+    @else if $breakpoint == XL {
+        $rule: $screen-xl-rule-max;
+    }
+    @else if $breakpoint == XXL {
+        $rule: $screen-xxl-rule-max;
+    }
     @else {
-        $rule: new-breakpoint(max-width $breakpoint);
+        $rule: "max-width: " + #{$breakpoint};
     }
 
-    @include media($rule) {
+    $query: "screen and (" + $rule + ") ";
+
+    @media #{$query} {
         @if $html-class {
             html.#{$html-class} & {
                 @content;
             }
         } @else {
+            @content;
+        }
+    }
+
+    @if $print == true {
+        @media print {
             @content;
         }
     }
 }
 
-@mixin media-min-max($breakpoint-min: M, $breakpoint-max: L, $html-class: null) {
+@mixin media-min-max($breakpoint-min: M, $breakpoint-max: $breakpoint-min, $html-class: null, $print: null) {
+    $rule-min: "min-width: 320px";
+    $rule-max: "max-width: 1920px";
 
     @if $breakpoint-min == M {
-        $breakpoint-min: $screen-m-breakpoint-min;
+        $rule-min: $screen-m-rule-min;
     }
     @else if $breakpoint-min == L {
-        $breakpoint-min: $screen-l-breakpoint-min;
+        $rule-min: $screen-l-rule-min;
+    }
+    @else if $breakpoint-min == XL {
+        $rule-min: $screen-xl-rule-min;
+    }
+    @else if $breakpoint-min == XXL {
+        $rule-min: $screen-xxl-rule-min;
     }
 
     @if $breakpoint-max == M {
-        $breakpoint-max: $screen-m-breakpoint-max;
+        $rule-max: $screen-m-rule-max;
     }
     @else if $breakpoint-max == L {
-        $breakpoint-max: $screen-l-breakpoint-max;
+        $rule-max: $screen-l-rule-max;
+    }
+    @else if $breakpoint-max == XL {
+        $rule-max: $screen-xl-rule-max;
+    }
+    @else if $breakpoint-max == XXL {
+        $rule-max: $screen-xxl-rule-max;
     }
 
-    @include media(min-width $breakpoint-min max-width $breakpoint-max) {
+    $query: "screen and (" + $rule-min + ") and (" + $rule-max + ")";
+
+    @media #{$query} {
         @if $html-class {
             html.#{$html-class} & {
                 @content;
@@ -104,6 +149,18 @@ $screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
         } @else {
             @content;
         }
+    }
+
+    @if $print == true {
+        @media print {
+            @content;
+        }
+    }
+}
+
+@mixin media-print {
+    @media print {
+        @content;
     }
 }
 
@@ -117,24 +174,3 @@ $screen-xl-rule-min: new-breakpoint(min-width $screen-xl-breakpoint-min);
 //         }
 //     }
 // }
-
-
-// density media query
-@mixin media-density($density: 1.3, $type: min, $dimension: width, $breakpoint: null) {
-    $viewport-rule: '';
-
-    @if $breakpoint {
-        $viewport-rule: ' and (#{$type}-#{$dimension}: #{$breakpoint})';
-    }
-
-    $rule: 'only screen and (-webkit-min-device-pixel-ratio: #{$density})' + $viewport-rule;
-    // $rule: $rule + ', only screen and (min--moz-device-pixel-ratio: #{$density})' + $viewport-rule;
-    // $rule: $rule + ', only screen and (-o-min-device-pixel-ratio: #{$density})' + $viewport-rule;
-    $rule: $rule + ', only screen and (min-device-pixel-ratio: #{$density})' + $viewport-rule;
-    $rule: $rule + ', only screen and (min-resolution: #{round($density*96)}dpi)' + $viewport-rule;
-    $rule: $rule + ', only screen and (min-resolution: #{$density}dppx)' + $viewport-rule;
-
-    @media #{$rule} {
-        @content;
-    }
-}
