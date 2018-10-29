@@ -4,3 +4,6 @@
 // ici sans risques de collision sur les scopes ou les noms des variables.
 
 import './app/example';
+import detectDevice from './app/utils/deviceDetection';
+
+detectDevice();
